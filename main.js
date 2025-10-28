@@ -6,7 +6,7 @@ const startBtn = document.getElementById('start');
 const playerName = document.getElementById('player-name');
 const enemyName = document.getElementById('enemy-name');
 
-// Устанавливаем имена по умолчанию
+// Имена игроков
 playerName.textContent = "Пыфин";
 enemyName.textContent = "Мыфин";
 
@@ -14,14 +14,9 @@ const size = 10; // размер поля
 let playerCells = [];
 let enemyCells = [];
 
-// Звуки
-const hitSound = new Audio('sounds/hit.mp3');
-const missSound = new Audio('sounds/miss.mp3');
-const clickSound = new Audio('sounds/click.mp3');
+let currentTurn = "player"; // чей ход: "player" или "enemy"
 
-let currentTurn = "player"; // кто ходит: "player" или "enemy"
-
-// Функция создания поля
+// Создание поля
 function createBoard(board, cellsArray) {
   for (let i = 0; i < size * size; i++) {
     const cell = document.createElement('div');
@@ -34,12 +29,12 @@ function createBoard(board, cellsArray) {
 createBoard(playerBoard, playerCells);
 createBoard(enemyBoard, enemyCells);
 
-// Пример кораблей игрока (серый)
+// Пример кораблей игрока
 playerCells[0].classList.add('ship');
 playerCells[1].classList.add('ship');
 playerCells[2].classList.add('ship');
 
-// Пример кораблей противника (скрытые)
+// Пример кораблей противника
 enemyCells[4].classList.add('ship');
 enemyCells[5].classList.add('ship');
 enemyCells[6].classList.add('ship');
@@ -61,15 +56,13 @@ function enemyTurn() {
 
   if(playerCells[shot].classList.contains('ship')) {
     playerCells[shot].classList.add('hit');
-    hitSound.play();
     alert(`${enemyName.textContent} попал!`);
   } else {
     playerCells[shot].classList.add('miss');
-    missSound.play();
     alert(`${enemyName.textContent} промахнулся!`);
   }
 
-  switchTurn(); // ход снова игрока
+  switchTurn(); // снова ход игрока
 }
 
 // Клик по полю противника
@@ -80,10 +73,8 @@ enemyCells.forEach(cell => {
 
     if(cell.classList.contains('ship')) {
       cell.classList.add('hit');
-      hitSound.play();
     } else {
       cell.classList.add('miss');
-      missSound.play();
     }
 
     switchTurn(); // ход переходит к противнику
@@ -93,6 +84,5 @@ enemyCells.forEach(cell => {
 
 // Кнопка начала игры
 startBtn.addEventListener('click', () => {
-  clickSound.play();
   alert(`${playerName.textContent} начинает игру!`);
 });
