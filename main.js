@@ -45,6 +45,22 @@ enemyCells[4].classList.add('ship');
 enemyCells[5].classList.add('ship');
 enemyCells[6].classList.add('ship');
 
+// Функция случайного хода противника
+function enemyTurn() {
+  let available = playerCells.filter(c => !c.classList.contains('hit') && !c.classList.contains('miss'));
+  if (available.length === 0) return; // все клетки открыты
+  let cell = available[Math.floor(Math.random() * available.length)];
+  if (cell.classList.contains('ship')) {
+    cell.classList.add('hit');
+    hitSound.play();
+    alert(`${enemyName.textContent} попал!`);
+  } else {
+    cell.classList.add('miss');
+    missSound.play();
+    alert(`${enemyName.textContent} промахнулся!`);
+  }
+}
+
 // Обработка клика по полю противника
 enemyCells.forEach(cell => {
   cell.addEventListener('click', () => {
@@ -52,15 +68,5 @@ enemyCells.forEach(cell => {
     if(cell.classList.contains('ship')) {
       cell.classList.add('hit');
       hitSound.play();
+      alert('Попадание!');
     } else {
-      cell.classList.add('miss');
-      missSound.play();
-    }
-  });
-});
-
-// Кнопка начала игры
-startBtn.addEventListener('click', () => {
-  clickSound.play();
-  alert(`${playerName.textContent} начинает игру!`);
-});
