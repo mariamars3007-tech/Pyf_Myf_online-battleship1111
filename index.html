@@ -1,19 +1,177 @@
-<div class="names">
-  <div>
-    <input type="text" id="player-input" placeholder="Введите имя игрока">
-    <button id="set-player-name">Сохранить имя</button>
-    <h2 id="player-name">Игрок 1</h2>
-  </div>
-  <div>
-    <input type="text" id="enemy-input" placeholder="Введите имя противника">
-    <button id="set-enemy-name">Сохранить имя</button>
-    <h2 id="enemy-name">Противник</h2>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Морской бой</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
 
-<div class="boards">
-  <div id="player-board" class="board"></div>
-  <div id="enemy-board" class="board"></div>
-</div>
+    .names, .boards {
+      display: flex;
+      gap: 50px;
+      margin-bottom: 20px;
+    }
 
-<button id="start">Начать игру</button>
+    .board {
+      display: grid;
+      grid-template-columns: repeat(10, 30px);
+      grid-template-rows: repeat(10, 30px);
+      gap: 2px;
+    }
+
+    .board div {
+      width: 30px;
+      height: 30px;
+      background-color: lightblue;
+      border: 1px solid #333;
+      cursor: pointer;
+    }
+
+    .board div.ship {
+      background-color: gray;
+    }
+
+    .board div.hit {
+      background-color: red;
+    }
+
+    .board div.miss {
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Имена игроков -->
+  <div class="names">
+    <div>
+      <h2 id="player-name">Пыфин</h2>
+      <button id="place-ships">Разместить корабли</button>
+    </div>
+    <div>
+      <h2 id="enemy-name">Мыфин</h2>
+    </div>
+  </div>
+
+  <!-- Поля игры -->
+  <div class="boards">
+    <div id="player-board" class="board"></div>
+    <div id="enemy-board" class="board"></div>
+  </div>
+
+  <button id="start">Начать игру</button>
+
+  <script>
+    // Элементы
+    const playerBoard = document.getElementById('player-board');
+    const enemyBoard = document.getElementById('enemy-board');
+    const startBtn = document.getElementById('start');
+    const placeShipsBtn = document.getElementById('place-ships');
+
+    const playerName = document.getElementById('player-name');
+    const enemyName = document.getElementById('enemy-name');
+
+    const size = 10;
+    let playerCells = [];
+    let enemyCells = [];
+    let shipsToPlace = 3; // количество кораблей игрока
+    let currentTurn = "player"; // чей ход
+
+    // Создание поля
+    function createBoard(board, cellsArray) {
+      for (let i = 0; i < size * size; i++) {
+        const cell = document.createElement('div');
+        cellsArray.push(cell);
+        board.appendChild(cell);
+      }
+    }
+
+    createBoard(playerBoard, playerCells);
+    createBoard(enemyBoard, enemyCells);
+
+    // Ручное размещение кораблей игроком
+    placeShipsBtn.addEventListener('click', () => {
+      alert(`Кликните на ${shipsToPlace} клеток для размещения кораблей`);
+      shipsToPlace = 3; // сброс на новый ход
+    });
+
+    playerCells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        if (shipsToPlace > 0 && !cell.classList.contains('ship')) {
+          cell.classList.add('ship');
+          shipsToPlace--;
+          if (shipsToPlace === 0) alert('Все корабли размещены!');
+        }
+      });
+    });
+
+    // Автоматическая расстановка кораблей противника
+    function placeEnemyShips(numShips) {
+      let placed = 0;
+      while (placed < numShips) {
+        let index = Math.floor(Math.random() * enemyCells.length);
+        if (!enemyCells[index].classList.contains('ship')) {
+          enemyCells[index].classList.add('ship');
+          placed++;
+        }
+      }
+    }
+
+    // Смена хода
+    function switchTurn() {
+      currentTurn = currentTurn === "player" ? "enemy" : "player";
+      alert(`${currentTurn === "player" ? playerName.textContent : enemyName.textContent} ходит!`);
+    }
+
+    // Логика хода противника
+    function enemyTurn() {
+      if (currentTurn !== "enemy") return;
+
+      let shot;
+      do {
+        shot = Math.floor(Math.random() * playerCells.length);
+      } while(playerCells[shot].classList.contains('hit') || playerCells[shot].classList.contains('miss'));
+
+      if(playerCells[shot].classList.contains('ship')) {
+        playerCells[shot].classList.add('hit');
+        alert(`${enemyName.textContent} попал!`);
+      } else {
+        playerCells[shot].classList.add('miss');
+        alert(`${enemyName.textContent} промахнулся!`);
+      }
+
+      switchTurn(); // ход игрока
+    }
+
+    // Клик по полю противника
+    enemyCells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        if (currentTurn !== "player") return;
+        if (cell.classList.contains('hit') || cell.classList.contains('miss')) return;
+
+        if(cell.classList.contains('ship')) {
+          cell.classList.add('hit');
+        } else {
+          cell.classList.add('miss');
+        }
+
+        switchTurn();
+        setTimeout(enemyTurn, 500);
+      });
+    });
+
+    // Кнопка начала игры
+    startBtn.addEventListener('click', () => {
+      placeEnemyShips(3); // размещаем 3 корабля противника
+      alert(`${playerName.textContent} начинает игру!`);
+    });
+
+  </script>
+</body>
+</html>
