@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Морской бой онлайн</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Морской бой онлайн</h1>
-
-  <div class="boards">
-    <div id="player-board" class="board"></div>
-    <div id="enemy-board" class="board"></div>
+<div class="names">
+  <div>
+    <input type="text" id="player-input" placeholder="Введите имя игрока">
+    <button id="set-player-name">Сохранить имя</button>
+    <h2 id="player-name">Игрок 1</h2>
   </div>
+  <div>
+    <input type="text" id="enemy-input" placeholder="Введите имя противника">
+    <button id="set-enemy-name">Сохранить имя</button>
+    <h2 id="enemy-name">Противник</h2>
+  </div>
+</div>
 
-  <button id="start">Начать игру</button>
+<div class="boards">
+  <div id="player-board" class="board"></div>
+  <div id="enemy-board" class="board"></div>
+</div>
 
-  <script src="main.js"></script>
-</body>
-</html>
+<button id="start">Начать игру</button>
